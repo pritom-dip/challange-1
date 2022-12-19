@@ -24,13 +24,13 @@ const Select = ({
 }: SelectProps) => {
   const handleChange = (data: Option[]) => {
     if (multiple) {
-      if (size && selected.length >= size) {
+      if (size && data.length - 1 >= size) {
         toast.error(`You can only select ${size} items`);
         return;
+      } else {
+        setSelected(data);
       }
-      setSelected(data);
     }
-    setSelected;
   };
   return (
     <>

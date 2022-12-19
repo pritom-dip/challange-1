@@ -23,9 +23,9 @@ export default async function handler(
 
       const data = await prisma.dataset.create({
         data: {
-          name: 'hello',
-          terms: true,
-          selectors: {
+          name: name,
+          terms: checkbox,
+          Selectedselectors: {
             createMany: {
               data: [...selectorsArray]
             }
@@ -33,13 +33,19 @@ export default async function handler(
         }
       });
 
-      return res.status(201).json({ message: 'Created' });
+      return res.status(201).json({ message: 'Created', data: data });
     } catch (err: any) {
-      console.log(err.message);
-      res.status(err.status).json({ error: err });
+      res.status(500).json({ error: err });
     }
   }
   if (req.method === 'GET') {
-    res.status(200).json({ message: 'success' });
+    try {
+      const data = await prisma.dataset.findMany();
+      return res.status(200).json({ data });
+    } catch (err) {
+      return res
+        .status(200)
+        .json({ message: 'failed', err: JSON.stringify(err) });
+    }
   }
 }

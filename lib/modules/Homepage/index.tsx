@@ -5,7 +5,8 @@ import Select from '@lib/components/Select';
 import { ISelector } from '@lib/types/selector';
 import { useEffect, useState } from 'react';
 import styles from './Homepage.module.scss';
-import { ToastContainer, toast } from 'react-toastify';
+import { toast } from 'react-toastify';
+import { useRouter } from 'next/router';
 
 const Homepage = () => {
   const [name, setName] = useState<string>('');
@@ -13,6 +14,9 @@ const Homepage = () => {
   const [optionArr, setOptionsArr] = useState<ISelector[]>([] as ISelector[]);
   const [checkbox, setCheckbox] = useState<boolean>(false);
   const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [buttonLoading, setButtonLoading] = useState<boolean>(false);
+  const [isEditMode, setEditMode] = useState<boolean>(false);
+  const [id, setId] = useState<string | undefined>();
 
   useEffect(() => {
     const controller = new AbortController();
@@ -59,6 +63,7 @@ const Homepage = () => {
     if (!checkValidation()) return;
 
     try {
+      setButtonLoading(true);
       const response = await fetch('/api/dataset', {
         method: 'POST',
         body: JSON.stringify({
@@ -68,7 +73,31 @@ const Homepage = () => {
         })
       });
       const { data } = await response.json();
-      console.log(data);
+      setId(data.id);
+      setButtonLoading(false);
+      setEditMode(true);
+      toast.success('Data saved successfully. You can edit it now.');
+    } catch (err) {
+      toast.error('Something went wrong');
+    }
+  };
+
+  const handleEditButtonClicked = async () => {
+    if (!checkValidation) return;
+
+    try {
+      setButtonLoading(true);
+      const response = await fetch(`/api/dataset/update/${id}`, {
+        method: 'POST',
+        body: JSON.stringify({
+          name,
+          selectors: multiSelected,
+          checkbox
+        })
+      });
+      await response.json();
+      setButtonLoading(false);
+      toast.success('Data edited successfully.');
     } catch (err) {
       toast.error('Something went wrong');
     }
@@ -76,7 +105,6 @@ const Homepage = () => {
 
   return (
     <div className={styles.container}>
-      <ToastContainer />
       <div className={styles.contentWrapper}>
         <div>
           Please enter your name and pick the Sectors you are currently involved
@@ -111,8 +139,14 @@ const Homepage = () => {
           />
         </div>
 
-        <div>
-          <Button onClick={handleSaveButtonClick} text="Save" />
+        <div style={{ display: 'flex' }}>
+          <Button
+            onClick={
+              isEditMode ? handleEditButtonClicked : handleSaveButtonClick
+            }
+            text={isEditMode ? 'Edit' : 'Save'}
+            loading={buttonLoading}
+          />
         </div>
       </div>
     </div>

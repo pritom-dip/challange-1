@@ -21,12 +21,12 @@ model Dataset {
   name  String
   terms Boolean
 
-  createdAt DateTime            @default(now())
-  updatedAt DateTime            @updatedAt
-  selectors SelectedSelectors[]
+  createdAt         DateTime            @default(now())
+  updatedAt         DateTime            @updatedAt
+  Selectedselectors Selectedselectors[]
 }
 
-model SelectedSelectors {
+model Selectedselectors {
   id        Int     @id @default(autoincrement())
   datasetId Int
   value     String

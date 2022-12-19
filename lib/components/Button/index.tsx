@@ -5,13 +5,22 @@ interface ButtonProps {
   onClick: () => void;
   text: string;
   classes?: string;
+  loading?: boolean;
 }
 
-const Button = ({ text = 'Confirm', onClick, classes = '' }: ButtonProps) => {
+const Button = ({
+  text = 'Confirm',
+  onClick,
+  classes = '',
+  loading = false
+}: ButtonProps) => {
   return (
-    <button onClick={onClick} className={classNames(styles.button, classes)}>
-      {text}
-    </button>
+    <div onClick={onClick} className={classNames(styles.wrapper)}>
+      {loading && <div className={styles.loading}></div>}
+      <button disabled={loading} className={classNames(styles.button, classes)}>
+        {text}
+      </button>
+    </div>
   );
 };
 export default Button;

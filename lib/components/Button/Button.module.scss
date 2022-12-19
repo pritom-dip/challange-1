@@ -1,13 +1,41 @@
-.button {
-  padding: 12px 36px;
-  border-radius: 4px;
+.wrapper {
   background-color: #4285f4;
   color: #fff;
+  padding: 8px 16px;
+  border-radius: 4px;
   cursor: pointer;
-  border: none;
-  outline: none;
-  font-weight: bold;
+  display: flex;
+  justify-content: flex-start;
   &:hover {
     background-color: #357ae8;
+  }
+  .button {
+    cursor: pointer;
+    border: none;
+    outline: none;
+    font-weight: bold;
+    color: #fff;
+    background-color: transparent;
+  }
+  .loading {
+    display: inline-block;
+    width: 20px;
+    height: 20px;
+    border: 3px solid rgba(255, 255, 255, 0.3);
+    border-radius: 50%;
+    border-top-color: #fff;
+    animation: spin 1s ease-in-out infinite;
+    -webkit-animation: spin 1s ease-in-out infinite;
+  }
+}
+
+@keyframes spin {
+  to {
+    -webkit-transform: rotate(360deg);
+  }
+}
+@-webkit-keyframes spin {
+  to {
+    -webkit-transform: rotate(360deg);
   }
 }
