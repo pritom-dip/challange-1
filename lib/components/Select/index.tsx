@@ -30,7 +30,6 @@ const Select = ({
   };
   return (
     <>
-      <pre>{JSON.stringify(selected)}</pre>
       {multiple ? (
         <MultiSelect
           options={options}

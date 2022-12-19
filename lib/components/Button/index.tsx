@@ -1,16 +1,15 @@
+import classNames from 'classnames';
+import styles from './Button.module.scss';
+
 interface ButtonProps {
   onClick: () => void;
   text: string;
-  classNames?: string;
+  classes?: string;
 }
 
-const Button = ({
-  text = 'Confirm',
-  onClick,
-  classNames = ''
-}: ButtonProps) => {
+const Button = ({ text = 'Confirm', onClick, classes = '' }: ButtonProps) => {
   return (
-    <button onClick={onClick} className={classNames}>
+    <button onClick={onClick} className={classNames(styles.button, classes)}>
       {text}
     </button>
   );

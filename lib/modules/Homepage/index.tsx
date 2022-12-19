@@ -3,6 +3,7 @@ import Checkbox from '@lib/components/Checkbox';
 import Input from '@lib/components/Input';
 import Select from '@lib/components/Select';
 import { useState } from 'react';
+import styles from './Homepage.module.scss';
 
 const options = [
   { id: 1, value: 'Manufacturing', label: 'Manufacturing' },
@@ -24,35 +25,45 @@ const Homepage = () => {
   const [multiSelected, setMultiSelected] = useState([]);
   const [checkbox, setCheckbox] = useState(false);
   return (
-    <>
-      <p>
-        Please enter your name and pick the Sectors you are currently involved
-        in.
-      </p>
-      <div>
-        <label htmlFor="name">Name:</label>
-        <Input id="name" type='="text' onChange={setName} value={name} />
-      </div>
+    <div className={styles.container}>
+      <div className={styles.contentWrapper}>
+        <div>
+          Please enter your name and pick the Sectors you are currently involved
+          in.
+        </div>
 
-      <div>
-        <label>Sectors:</label>
+        <div className={styles.inputDiv}>
+          <label className={styles.label} htmlFor="name">
+            Name:
+          </label>
+          <Input id="name" type='="text' onChange={setName} value={name} />
+        </div>
 
-        <Select
-          options={options}
-          selected={multiSelected}
-          setSelected={setMultiSelected}
-          multiple={true}
-          size={5}
-        />
+        <div className={styles.inputDiv}>
+          <label>Sectors:</label>
+          <Select
+            options={options}
+            selected={multiSelected}
+            setSelected={setMultiSelected}
+            multiple={true}
+            size={5}
+          />
+        </div>
+
+        <div>
+          <Checkbox
+            id="checkbox"
+            label="Agree to terms"
+            onChange={setCheckbox}
+            value={checkbox}
+          />
+        </div>
+
+        <div>
+          <Button onClick={() => {}} text="Save" />
+        </div>
       </div>
-      <Checkbox
-        id="checkbox"
-        label="Agree to terms"
-        onChange={setCheckbox}
-        value={checkbox}
-      />
-      <Button onClick={() => {}} text="Save" />
-    </>
+    </div>
   );
 };
 

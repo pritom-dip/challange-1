@@ -1,10 +1,13 @@
+import classNames from 'classnames';
+import styles from './input.module.scss';
+
 interface InputProps {
   type: string;
   placeholder?: string;
   value: any;
   onChange: React.Dispatch<React.SetStateAction<string>>;
   id?: string;
-  classNames?: string;
+  classes?: string;
 }
 
 const Input = ({
@@ -13,7 +16,7 @@ const Input = ({
   value = '',
   onChange,
   id = '',
-  classNames = ''
+  classes = ''
 }: InputProps) => {
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     onChange(e.target.value);
@@ -22,7 +25,7 @@ const Input = ({
     <input
       type={type}
       id={id}
-      className={classNames}
+      className={classNames(styles.input, classes)}
       value={value}
       placeholder={placeholder}
       onChange={handleChange}
