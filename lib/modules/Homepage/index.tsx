@@ -2,30 +2,81 @@ import Button from '@lib/components/Button';
 import Checkbox from '@lib/components/Checkbox';
 import Input from '@lib/components/Input';
 import Select from '@lib/components/Select';
-import { useState } from 'react';
+import { ISelector } from '@lib/types/selector';
+import { useEffect, useState } from 'react';
 import styles from './Homepage.module.scss';
-
-const options = [
-  { id: 1, value: 'Manufacturing', label: 'Manufacturing' },
-  { id: 2, value: 'Construction materials', label: 'Construction materials' },
-  { id: 3, value: 'Electronics and Optics', label: 'Electronics and Optics' },
-  { id: 4, value: 'Food and Beverage', label: 'Food and Beverage' },
-  {
-    id: 5,
-    value: 'Bakery & confectionery products',
-    label: 'Bakery & confectionery products'
-  },
-  { id: 6, value: 'Beverages', label: 'Beverages' },
-  { id: 7, value: 'Fish & fish products', label: 'Fish & fish products' },
-  { id: 8, value: 'Meat & meat products', label: 'Meat & meat products' }
-];
+import { ToastContainer, toast } from 'react-toastify';
 
 const Homepage = () => {
-  const [name, setName] = useState('');
-  const [multiSelected, setMultiSelected] = useState([]);
-  const [checkbox, setCheckbox] = useState(false);
+  const [name, setName] = useState<string>('');
+  const [multiSelected, setMultiSelected] = useState<ISelector[]>([]);
+  const [optionArr, setOptionsArr] = useState<ISelector[]>([] as ISelector[]);
+  const [checkbox, setCheckbox] = useState<boolean>(false);
+  const [isLoading, setIsLoading] = useState<boolean>(false);
+
+  useEffect(() => {
+    const controller = new AbortController();
+    const signal = controller.signal;
+
+    const fetchSelectorsData = async () => {
+      try {
+        setIsLoading(true);
+        const response = await fetch('/api/selectors', {
+          method: 'GET',
+          signal
+        });
+        const { data } = await response.json();
+        setOptionsArr(data);
+        setIsLoading(false);
+      } catch (err) {
+        setOptionsArr([]);
+        setIsLoading(false);
+      }
+    };
+
+    fetchSelectorsData();
+
+    return () => controller.abort();
+  }, []);
+
+  const checkValidation = () => {
+    if (!name || name.trim() === '') {
+      toast.error('Please provide a name');
+      return false;
+    }
+    if (multiSelected.length === 0) {
+      toast.error('Please select at least one sector');
+      return false;
+    }
+    if (!checkbox) {
+      toast.error('You must agree to the terms');
+      return false;
+    }
+    return true;
+  };
+
+  const handleSaveButtonClick = async () => {
+    if (!checkValidation()) return;
+
+    try {
+      const response = await fetch('/api/dataset', {
+        method: 'POST',
+        body: JSON.stringify({
+          name,
+          selectors: multiSelected,
+          checkbox
+        })
+      });
+      const { data } = await response.json();
+      console.log(data);
+    } catch (err) {
+      toast.error('Something went wrong');
+    }
+  };
+
   return (
     <div className={styles.container}>
+      <ToastContainer />
       <div className={styles.contentWrapper}>
         <div>
           Please enter your name and pick the Sectors you are currently involved
@@ -42,11 +93,12 @@ const Homepage = () => {
         <div className={styles.inputDiv}>
           <label>Sectors:</label>
           <Select
-            options={options}
+            options={optionArr}
             selected={multiSelected}
             setSelected={setMultiSelected}
             multiple={true}
             size={5}
+            isLoading={isLoading}
           />
         </div>
 
@@ -60,7 +112,7 @@ const Homepage = () => {
         </div>
 
         <div>
-          <Button onClick={() => {}} text="Save" />
+          <Button onClick={handleSaveButtonClick} text="Save" />
         </div>
       </div>
     </div>

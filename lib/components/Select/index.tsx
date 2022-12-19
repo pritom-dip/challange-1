@@ -1,4 +1,5 @@
 import { MultiSelect, Option } from 'react-multi-select-component';
+import { toast } from 'react-toastify';
 
 interface SelectProps {
   options: Option[];
@@ -8,6 +9,7 @@ interface SelectProps {
   labelledBy?: string;
   size?: number;
   hasSelectAll?: boolean;
+  isLoading?: boolean;
 }
 
 const Select = ({
@@ -17,11 +19,13 @@ const Select = ({
   multiple = true,
   labelledBy = 'Select',
   size = 100,
-  hasSelectAll = false
+  hasSelectAll = false,
+  isLoading = false
 }: SelectProps) => {
   const handleChange = (data: Option[]) => {
     if (multiple) {
       if (size && selected.length >= size) {
+        toast.error(`You can only select ${size} items`);
         return;
       }
       setSelected(data);
@@ -37,6 +41,7 @@ const Select = ({
           onChange={handleChange}
           labelledBy={labelledBy}
           hasSelectAll={hasSelectAll}
+          isLoading={isLoading}
         />
       ) : (
         <select>

@@ -1,0 +1,36 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Selector {
+  id    Int     @id @default(autoincrement())
+  value String  @unique
+  label String?
+}
+
+model Dataset {
+  id    Int     @id @default(autoincrement())
+  name  String
+  terms Boolean
+
+  createdAt DateTime            @default(now())
+  updatedAt DateTime            @updatedAt
+  selectors SelectedSelectors[]
+}
+
+model SelectedSelectors {
+  id        Int     @id @default(autoincrement())
+  datasetId Int
+  value     String
+  label     String?
+
+  Dataset Dataset @relation(fields: [datasetId], references: [id])
+}
